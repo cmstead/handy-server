@@ -6,10 +6,13 @@
     'use strict';
 
     function buildDirList(filePath, url) {
-        const linkUrl = /\/$/.test(url) ? url : url + '/';
         const filePaths = fs.readdirSync(filePath);
+
+        let currentPath = /^\//.test(url) ? url : '/' + url;
+        currentPath = /\/$/.test(currentPath) ? currentPath : currentPath + '/';
+
         return filePaths.reduce((result, nextPath) => {
-            return `${result}<a href="/${linkUrl}${nextPath}">${nextPath}</a><br>\n`;
+            return `${result}<a href="${currentPath}${nextPath}">${nextPath}</a><br>\n`;
         }, '');
     }
 
