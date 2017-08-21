@@ -6,6 +6,9 @@
   "scripts": {
     "test": "gulp test"
   },
+  "bin": {
+      "handy-server": "./index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cmstead/handyServer.git"

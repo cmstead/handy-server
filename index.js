@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 (function (moduleFactory) {
     const pathUtils = require('./bin/pathUtils');
     const fileUtils = require('./bin/fileUtils');
