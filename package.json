@@ -1,7 +1,7 @@
 {
-  "name": "handyServer",
+  "name": "handy-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "A quick, easy to run server for static resources",
   "main": "index.js",
   "scripts": {
     "test": "gulp test"
