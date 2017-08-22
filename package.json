@@ -1,6 +1,6 @@
 {
   "name": "handy-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A quick, easy to run server for static resources",
   "main": "index.js",
   "scripts": {

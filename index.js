@@ -2,7 +2,7 @@
 
 (function (moduleFactory) {
     const pathUtils = require('./bin/pathUtils');
-    const fileUtils = require('./bin/fileUtils');
+    const viewBuilder = require('./bin/viewBuilder');
 
     const cwd = process.cwd();
     const userPath = process.argv[2];
@@ -14,26 +14,23 @@
     const http = require('http');
     const basePath = pathUtils.getFullPath(cwd, userPath);
 
-    moduleFactory(http, pathUtils, fileUtils, basePath);
-})(function (http, pathUtils, fileUtils, basePath) {
-    'use strict';
+    moduleFactory(http, pathUtils, viewBuilder, basePath);
 
-    const statFile = pathUtils.statFile;
-    const getFullPath = pathUtils.getFullPath;
+})(function (http, pathUtils, viewBuilder, basePath) {
+    'use strict';
 
     http
         .createServer(function (request, response) {
-
             const requestPath = request.url.replace(/^\//, '');
-            const filePath = getFullPath(basePath, requestPath);
+            const filePath = pathUtils.getFullPath(basePath, requestPath);
+            const viewOutput = viewBuilder.getView(filePath, requestPath);
+            const isBadViewOutput = viewOutput === null;
 
-            if (statFile(filePath)) {
-                const content = fileUtils.getFile(filePath, requestPath);
-
-                response.writeHead(200, 'OK');
-                response.write(content);
-            } else {
+            if(isBadViewOutput) {
                 response.writeHead(404, 'Not Found');
+            } else {
+                response.writeHead(200, 'OK');
+                response.write(viewOutput);
             }
 
             response.end();

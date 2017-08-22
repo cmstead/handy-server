@@ -1,3 +1,5 @@
+'use strict';
+
 (function (moduleFactory) {
     const fs = require('fs');
 
@@ -5,28 +7,34 @@
 })(function (fs) {
     'use strict';
 
-    function buildDirList(filePath, url) {
-        const filePaths = fs.readdirSync(filePath);
-
-        let currentPath = /^\//.test(url) ? url : '/' + url;
-        currentPath = /\/$/.test(currentPath) ? currentPath : currentPath + '/';
-
-        return filePaths.reduce((result, nextPath) => {
-            return `${result}<a href="${currentPath}${nextPath}">${nextPath}</a><br>\n`;
-        }, '');
-    }
-
-    function getFile(filePath, url) {
-        const isDir = fs.lstatSync(filePath).isDirectory();
-
-        if(isDir) {
-            return buildDirList(filePath, url);
-        } else {
-            return fs.readFileSync(filePath);
+    function statPath(filePath) {
+        try {
+            fs.lstatSync(filePath);
+            return true;
+        } catch (e) {
+            return false;
         }
     }
 
+    function isDirectory(filePath) {
+        try{
+            return fs.lstatSync(filePath).isDirectory();
+        } catch (e) {
+            return false;
+        }
+    }
+
+    function getFileOrDirectoryList(filePath) {
+        const readAction = isDirectory(filePath)
+            ? (filePath) => fs.readdirSync(filePath)
+            : (filePath) => fs.readFileSync(filePath, 'utf8');
+
+        return statPath(filePath) ? readAction(filePath) : null;
+    }
+
     return {
-        getFile: getFile
+        getFileOrDirectoryList: getFileOrDirectoryList,
+        isDirectory: isDirectory,
+        statPath: statPath
     };
 });
