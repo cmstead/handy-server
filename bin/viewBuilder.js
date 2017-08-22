@@ -13,14 +13,26 @@
     const mdConverter = new showdown.Converter(mdOptions);
     mdConverter.setFlavor('github');
 
+    const mdStyles = fileUtils.getFile(__dirname + '/../static-files/md.css');
+
+    function transformMarkdown(content) {
+        const htmlOutput = mdConverter.makeHtml(content);
+        const result =
+            '<html>\n' +
+            '<style>\n' + mdStyles + '</style>\n' +
+            '<body>\n<div class="container">' +
+            htmlOutput +
+            '</div>\n</body>\n' +
+            '</html>';
+
+        return result;
+    }
+
     const transforms = [
         {
             isTransformable: (content, filePath) =>
                 typeof filePath === 'string' && /\.md$/.test(filePath),
-            transform: function (content) {
-                const htmlOutput = mdConverter.makeHtml(content);
-                return `<html><body>${htmlOutput}</body></html>`;
-            }
+            transform: transformMarkdown
         }
     ];
 

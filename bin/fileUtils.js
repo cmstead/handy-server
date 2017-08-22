@@ -27,12 +27,17 @@
     function getFileOrDirectoryList(filePath) {
         const readAction = isDirectory(filePath)
             ? (filePath) => fs.readdirSync(filePath)
-            : (filePath) => fs.readFileSync(filePath, 'utf8');
+            : (filePath) => getFile(filePath, 'utf8');
 
         return statPath(filePath) ? readAction(filePath) : null;
     }
 
+    function getFile(filePath) {
+        return fs.readFileSync(filePath, 'utf8');
+    }
+
     return {
+        getFile: getFile,
         getFileOrDirectoryList: getFileOrDirectoryList,
         isDirectory: isDirectory,
         statPath: statPath
