@@ -1,9 +1,28 @@
 (function (moduleFactory) {
     const fileUtils = require('./fileUtils');
+    const showdown = require('showdown');
 
-    module.exports = moduleFactory(fileUtils);
-})(function (fileUtils) {
+    module.exports = moduleFactory(fileUtils, showdown);
+})(function (fileUtils, showdown) {
     'use strict';
+
+    const mdOptions = {
+        tables: true,
+        disableForced4SpacesIndentedSublists: true
+    };
+    const mdConverter = new showdown.Converter(mdOptions);
+    mdConverter.setFlavor('github');
+
+    const transforms = [
+        {
+            isTransformable: (content, filePath) =>
+                typeof filePath === 'string' && /\.md$/.test(filePath),
+            transform: function (content) {
+                const htmlOutput = mdConverter.makeHtml(content);
+                return `<html><body>${htmlOutput}</body></html>`;
+            }
+        }
+    ];
 
     function buildCurrentPath(url) {
         const currentPath = /^\//.test(url) ? url : '/' + url;
@@ -29,8 +48,16 @@
         return filePaths.reduce(addPathLink(currentPath), '');
     }
 
-    function getCurrentFile(fileContent) {
-        return fileContent;
+    function transformContent(filePath) {
+        return function (result, transformer) {
+            return transformer.isTransformable(result, filePath)
+                ? transformer.transform(result)
+                : result;
+        }
+    }
+
+    function getCurrentFile(fileContent, url) {
+        return transforms.reduce(transformContent(url), fileContent);
     }
 
     function buildViewOutput(pathOutput, url) {
