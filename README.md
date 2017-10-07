@@ -18,7 +18,13 @@ Go to the directory you want to serve statically and run the following command:
 handy-server ./
 ```
 
-Your directory will be available at `http://localhost:8080`.
+Optionally, you can add a port number:
+
+```bash
+handy-server ./ 1337
+```
+
+Your directory will be available at `http://localhost:8080` or `http://localhost:<portNumber>`.
 
 That's it!
 
